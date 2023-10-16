@@ -9,9 +9,21 @@ export interface User {
   name: string;
 }
 
+interface UserData {
+  id: number;
+  name: string;
+  avatar: string;
+  details: {
+    city: string;
+    company: string;
+    position: string;
+  };
+}
+
 interface State {
   selectedId: number | null;
   users: User[] | null;
+  userData: UserData | null;
 }
 
 export type SetSelectedId = {
@@ -24,13 +36,23 @@ type SetUsers = {
   payload: User[] | null;
 };
 
-type Action = SetSelectedId | SetUsers;
+type setUserData = {
+  type: "setUserData";
+  payload: UserData | null;
+};
+
+type Action = SetSelectedId | SetUsers | setUserData;
 
 const LIST_URL =
-  "https://raw.githubusercontent.com/netology-code/ra16-homeworks/master/hooks-context/use-effect/data/users.json ";
+  "https://raw.githubusercontent.com/netology-code/ra16-homeworks/master/hooks-context/use-effect/data/users.json";
+//raw.githubusercontent.com/netology-code/ra16-homeworks/ra-51/hooks-context/use-effect/data/1.json
 
-async function loadUsers(): Promise<User[] | null> {
-  return await fetch(LIST_URL)
+const USER_DATA_URL = (id: number) => {
+  return `https://raw.githubusercontent.com/netology-code/ra16-homeworks/ra-51/hooks-context/use-effect/data/${id}.json`;
+};
+
+async function loadData(url: string) {
+  return await fetch(url)
     .then((response) => {
       return response.json();
     })
@@ -46,6 +68,8 @@ function reducer(state: State, action: Action) {
       return { ...state, selectedId: action.payload };
     case "setUsers":
       return { ...state, users: action.payload };
+    case "setUserData":
+      return { ...state, userData: action.payload };
     default:
       throw new Error();
   }
@@ -54,15 +78,25 @@ function reducer(state: State, action: Action) {
 export default function Home() {
   const [state, dispatch] = useReducer(reducer, {
     selectedId: null,
+    userData: null,
     users: [],
   });
 
   useEffect(() => {
-    (async () => {
-      const users = await loadUsers();
-      dispatch({ type: "setUsers", payload: users });
-    })();
-  }, [state.users]);
+    if (state.users?.length === 0) {
+      (async () => {
+        const users = await loadData(LIST_URL);
+        dispatch({ type: "setUsers", payload: users });
+      })();
+    }
+    if (state.selectedId !== null) {
+      (async () => {
+        const user = await loadData(USER_DATA_URL(state.selectedId!));
+        dispatch({ type: "setUserData", payload: user });
+        console.log(user);
+      })();
+    }
+  }, [state.users, state.selectedId]);
   return (
     <>
       <List
