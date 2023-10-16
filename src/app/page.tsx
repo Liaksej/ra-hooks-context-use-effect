@@ -42,6 +42,7 @@ async function loadUsers(): Promise<User[] | null> {
 function reducer(state: State, action: Action) {
   switch (action.type) {
     case "setSelectedId":
+      console.log("рендер");
       return { ...state, selectedId: action.payload };
     case "setUsers":
       return { ...state, users: action.payload };
@@ -61,7 +62,7 @@ export default function Home() {
       const users = await loadUsers();
       dispatch({ type: "setUsers", payload: users });
     })();
-  }, []);
+  }, [state.users]);
   return (
     <>
       <List

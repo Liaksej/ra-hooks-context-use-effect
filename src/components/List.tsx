@@ -9,6 +9,9 @@ interface ListProps {
 
 export const List = ({ users, dispatch, selectedId }: ListProps) => {
   function selectHandler(event: MouseEvent<HTMLElement>, id: number) {
+    if (selectedId === id) {
+      return;
+    }
     dispatch({ type: "setSelectedId", payload: id });
     if (
       event.currentTarget.parentNode &&
