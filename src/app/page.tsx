@@ -9,7 +9,7 @@ export interface User {
   name: string;
 }
 
-interface UserData {
+export interface UserData {
   id: number;
   name: string;
   avatar: string;
@@ -93,18 +93,17 @@ export default function Home() {
       (async () => {
         const user = await loadData(USER_DATA_URL(state.selectedId!));
         dispatch({ type: "setUserData", payload: user });
-        console.log(user);
       })();
     }
   }, [state.users, state.selectedId]);
   return (
-    <>
+    <div className="mx-auto flex justify-around">
       <List
         users={state.users}
         selectedId={state.selectedId}
         dispatch={dispatch}
       />
-      <Details />
-    </>
+      <Details userData={state.userData} />
+    </div>
   );
 }

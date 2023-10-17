@@ -21,13 +21,17 @@ export const List = ({ users, dispatch, selectedId }: ListProps) => {
         (node as HTMLElement).style.backgroundColor = "";
       });
     }
-    event.currentTarget.style.backgroundColor = "blue";
+    event.currentTarget.style.backgroundColor = "#4285F4";
   }
 
   return (
-    <ul>
+    <ul className="w-1/6 divide-y divide-gray-200">
       {users?.map((user) => (
-        <li key={user.id} onClick={(event) => selectHandler(event, user.id)}>
+        <li
+          key={user.id}
+          onClick={(event) => selectHandler(event, user.id)}
+          className="py-4 text-sm font-semibold leading-6 text-gray-900"
+        >
           {user.name}
         </li>
       ))}
